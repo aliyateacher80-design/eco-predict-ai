@@ -87,7 +87,7 @@ with col3:
 # 🌳 7. ECO-TREE STATUS (Рейтинг 60 шегі бойынша)
 st.markdown("---")
 st.subheader("🌳 Эко-ағаштың күйі")
-if eco_score >= 80:
+if eco_score >= 55:
     st.balloons()
     st.markdown("<div class='eco-tree'>🌳🌳🌳</div>", unsafe_allow_html=True)
     st.success(f"Керемет! Сіздің экологиялық жауапкершілігіңіз жоғары! (Рейтинг: {eco_score}/100)")
