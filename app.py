@@ -6,40 +6,47 @@ from datetime import datetime
 # 1. БЕТТІҢ НЕГІЗГІ ПАРАМЕТРЛЕРІ
 st.set_page_config(page_title="EcoPredict AI", layout="wide", page_icon="🌿")
 
-# 🎨 2. ЕҢ ӘДЕМІ MODERN CSS ДИЗАЙН
+# 🎨 2. ЕҢ ӘДЕМІ SOFT DARK / GLASSMORPHISM СТИЛІ (АППАҚ ЕМЕС, СӘНДІ ФОН)
 st.markdown("""
     <style>
-    /* Негізгі фон */
+    /* Негізгі артқы фон (Жұмсақ күңгірт-жасыл градиент) */
     .stApp {
-        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+        background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%) !important;
+        color: #f1f5f9;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
     
     /* Сайдбар стилі */
     section[data-testid="stSidebar"] {
-        background-color: #ffffff !important;
-        box-shadow: 2px 0 12px rgba(0,0,0,0.05);
+        background-color: #1e293b !important;
+        border-right: 1px solid #334155;
     }
     
-    /* Карточкалар стилі */
+    section[data-testid="stSidebar"] * {
+        color: #f1f5f9 !important;
+    }
+    
+    /* Сәнді мөлдір Карточкалар (Glassmorphism Effect) */
     .metric-card {
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.07);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
         border-radius: 20px;
-        padding: 20px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-        border: 1px solid rgba(255, 255, 255, 0.6);
+        padding: 22px 15px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        border: 1px solid rgba(255, 255, 255, 0.15);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         text-align: center;
     }
     .metric-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        transform: translateY(-6px);
+        box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.3);
     }
     .metric-title {
         font-size: 1.1rem;
         font-weight: 600;
-        color: #4a5568;
+        color: #cbd5e1;
         margin-bottom: 8px;
     }
     .metric-value {
@@ -48,36 +55,37 @@ st.markdown("""
         margin: 5px 0;
     }
     .metric-sub {
-        font-size: 0.9rem;
-        color: #718096;
+        font-size: 0.95rem;
+        color: #94a3b8;
         font-weight: 500;
     }
     
-    /* Түсті градиенттер */
-    .card-light { border-top: 5px solid #10b981; }
-    .card-water { border-top: 5px solid #06b6d4; }
-    .card-gas { border-top: 5px solid #f97316; }
-    .card-wifi { border-top: 5px solid #8b5cf6; }
-    .card-score { border-top: 5px solid #eab308; }
+    /* Шеткі түсті индикаторлар */
+    .card-light { border-top: 4px solid #10b981; }
+    .card-water { border-top: 4px solid #38bdf8; }
+    .card-gas { border-top: 4px solid #fb923c; }
+    .card-wifi { border-top: 4px solid #c084fc; }
+    .card-score { border-top: 4px solid #facc15; }
     
     /* Эко-ағаш секциясы */
     .eco-container {
-        background: white;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(16px);
         border-radius: 20px;
         padding: 25px;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         margin-top: 15px;
         text-align: center;
     }
     .eco-tree-icon {
-        font-size: 70px;
+        font-size: 65px;
         margin: 10px 0;
-        animation: float 3s ease-in-out infinite;
     }
     
-    /* Прогресс-бар */
+    /* Сәнді Прогресс-бар */
     .progress-bar-bg {
-        background-color: #edf2f7;
+        background-color: rgba(255, 255, 255, 0.1);
         border-radius: 50px;
         height: 14px;
         width: 100%;
@@ -88,6 +96,11 @@ st.markdown("""
         height: 100%;
         border-radius: 50px;
         transition: width 0.8s ease-in-out;
+    }
+    
+    /* Текстерді ақ түске реттеу */
+    h1, h2, h3, h4, p, span {
+        color: #f8fafc !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -107,8 +120,8 @@ current_month_name = MONTH_NAMES[current_month_num]
 next_month_name = MONTH_NAMES[next_month_num]
 
 # 🏠 3. HEADER
-st.markdown("<h1 style='text-align: center; color: #1e293b; font-size: 2.3rem; font-weight: 800;'>🌿 EcoPredict AI</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #64748b; font-size: 1.1rem; margin-bottom: 25px;'>Атырау облысы бойынша коммуналдық шығындар мен ресурстарды интеллектуалды аналитикалау</p>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; font-size: 2.5rem; font-weight: 800;'>🌿 EcoPredict AI</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #cbd5e1 !important; font-size: 1.1rem; margin-bottom: 30px;'>Атырау облысы бойынша коммуналдық шығындар мен ресурстарды интеллектуалды аналитикалау</p>", unsafe_allow_html=True)
 
 # ⚙️ 4. SIDEBAR
 with st.sidebar:
@@ -171,7 +184,7 @@ forecast_cost = (resources_cost * 0.90) + wifi_cost
 
 diff = total_current_cost - last_month_cost
 diff_text = f"{abs(int(diff))} ₸ үнемделді" if diff < 0 else f"{int(diff)} ₸ артық шығын"
-diff_color = "#10b981" if diff < 0 else "#ef4444"
+diff_color = "#34d399" if diff < 0 else "#f87171"
 
 # 📊 6. СӘНДІ DASHBOARD CARDS
 col1, col2, col3, col4, col5 = st.columns(5)
@@ -180,7 +193,7 @@ with col1:
     st.markdown(f"""
         <div class='metric-card card-light'>
             <div class='metric-title'>⚡ Электр</div>
-            <div class='metric-value' style='color: #10b981;'>{energy} <span style='font-size: 1rem;'>кВт</span></div>
+            <div class='metric-value' style='color: #34d399;'>{energy} <span style='font-size: 1rem;'>кВт</span></div>
             <div class='metric-sub'>{current_light_cost:,.0f} ₸</div>
         </div>
     """, unsafe_allow_html=True)
@@ -189,7 +202,7 @@ with col2:
     st.markdown(f"""
         <div class='metric-card card-water'>
             <div class='metric-title'>💧 Су</div>
-            <div class='metric-value' style='color: #06b6d4;'>{water} <span style='font-size: 1rem;'>м³</span></div>
+            <div class='metric-value' style='color: #38bdf8;'>{water} <span style='font-size: 1rem;'>м³</span></div>
             <div class='metric-sub'>{current_water_cost:,.0f} ₸</div>
         </div>
     """, unsafe_allow_html=True)
@@ -198,7 +211,7 @@ with col3:
     st.markdown(f"""
         <div class='metric-card card-gas'>
             <div class='metric-title'>🔥 Табиғи газ</div>
-            <div class='metric-value' style='color: #f97316;'>{gas} <span style='font-size: 1rem;'>м³</span></div>
+            <div class='metric-value' style='color: #fb923c;'>{gas} <span style='font-size: 1rem;'>м³</span></div>
             <div class='metric-sub'>{current_gas_cost:,.0f} ₸</div>
         </div>
     """, unsafe_allow_html=True)
@@ -207,7 +220,7 @@ with col4:
     st.markdown(f"""
         <div class='metric-card card-wifi'>
             <div class='metric-title'>📡 Wi-Fi</div>
-            <div class='metric-value' style='color: #8b5cf6;'>Абонент</div>
+            <div class='metric-value' style='color: #c084fc;'>Абонент</div>
             <div class='metric-sub'>{wifi_cost:,.0f} ₸</div>
         </div>
     """, unsafe_allow_html=True)
@@ -216,36 +229,36 @@ with col5:
     st.markdown(f"""
         <div class='metric-card card-score'>
             <div class='metric-title'>🏆 Eco Score</div>
-            <div class='metric-value' style='color: #eab308;'>{eco_score}<span style='font-size: 1.2rem;'>/100</span></div>
+            <div class='metric-value' style='color: #facc15;'>{eco_score}<span style='font-size: 1.2rem;'>/100</span></div>
             <div class='metric-sub' style='color: {diff_color}; font-weight: bold;'>{diff_text}</div>
         </div>
     """, unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# 🌳 7. ECO-TREE STATUS (ПРОГРЕСС-БАРМЕН)
+# 🌳 7. ECO-TREE STATUS
 if eco_score >= 70:
     tree_icon = "🌳🌳🌳"
     status_title = "Керемет көрсеткіш!"
     status_desc = "Ресурстар өте үнемді жұмсалуда. Экологиялық жауапкершілігіңіз жоғары."
-    bar_color = "#10b981"
+    bar_color = "#34d399"
 elif 45 <= eco_score < 70:
     tree_icon = "🌿🌿"
     status_title = "Жақсы орташа деңгей!"
     status_desc = "Ресурстар ұтымды жұмсалуда, бірақ әлі де үнемдеуге мүмкіндік бар."
-    bar_color = "#f59e0b"
+    bar_color = "#fbbf24"
 else:
     tree_icon = "🍂"
     status_title = "Ресурстарды тұтыну жоғары!"
     status_desc = "Абайлаңыз! Белгіленген нормалардан асу байқалады."
-    bar_color = "#ef4444"
+    bar_color = "#f87171"
 
 st.markdown(f"""
     <div class='eco-container'>
-        <h3 style='margin: 0; color: #1e293b; font-weight: 700;'>🌳 Эко-ағаштың күйі</h3>
+        <h3 style='margin: 0; font-weight: 700;'>🌳 Эко-ағаштың күйі</h3>
         <div class='eco-tree-icon'>{tree_icon}</div>
-        <h4 style='color: {bar_color}; margin: 5px 0;'>{status_title} (Рейтинг: {eco_score}/100)</h4>
-        <p style='color: #64748b; font-size: 0.95rem;'>{status_desc}</p>
+        <h4 style='color: {bar_color} !important; margin: 5px 0;'>{status_title} (Рейтинг: {eco_score}/100)</h4>
+        <p style='color: #cbd5e1 !important; font-size: 0.95rem;'>{status_desc}</p>
         <div class='progress-bar-bg'>
             <div class='progress-bar-fill' style='width: {eco_score}%; background-color: {bar_color};'></div>
         </div>
@@ -254,8 +267,8 @@ st.markdown(f"""
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# 📈 8. ГРАФИК (СӘНДІ ДИЗАЙНМЕН)
-st.markdown(f"<h3 style='color: #1e293b; font-size: 1.3rem; font-weight: 700;'>📊 Шығындар аналитикасы: {current_month_name} vs {next_month_name} (Болжам)</h3>", unsafe_allow_html=True)
+# 📈 8. ГРАФИК (DARK THEME)
+st.markdown(f"<h3 style='font-size: 1.3rem; font-weight: 700;'>📊 Шығындар аналитикасы: {current_month_name} vs {next_month_name} (Болжам)</h3>", unsafe_allow_html=True)
 
 chart_data = pd.DataFrame({
     'Кезең': [f'{current_month_name} (Ағымдағы)', f'{next_month_name} (10% Үнем Болжамы)'],
@@ -267,7 +280,7 @@ fig = px.bar(
     x='Кезең', 
     y='Шығын (₸)', 
     color='Кезең', 
-    color_discrete_sequence=['#10b981', '#f59e0b'], 
+    color_discrete_sequence=['#34d399', '#facc15'], 
     text_auto='.0f'
 )
 fig.update_layout(
@@ -276,13 +289,16 @@ fig.update_layout(
     yaxis_title="Сомасы (₸)",
     plot_bgcolor='rgba(0,0,0,0)',
     paper_bgcolor='rgba(0,0,0,0)',
-    font=dict(family="Inter, sans-serif", size=14)
+    font=dict(family="Inter, sans-serif", size=14, color="#f8fafc")
 )
+fig.update_xaxes(showgrid=False)
+fig.update_yaxes(showgrid=True, gridcolor='rgba(255,255,255,0.1)')
+
 st.plotly_chart(fig, use_container_width=True)
 
 # 🤖 9. AI ADVISOR
-st.markdown("<hr style='border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;'>", unsafe_allow_html=True)
-st.markdown("<h3 style='color: #1e293b; font-size: 1.3rem; font-weight: 700;'>🤖 Eco AI Advisor ұсыныстары</h3>", unsafe_allow_html=True)
+st.markdown("<hr style='border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 30px 0;'>", unsafe_allow_html=True)
+st.markdown("<h3 style='font-size: 1.3rem; font-weight: 700;'>🤖 Eco AI Advisor ұсыныстары</h3>", unsafe_allow_html=True)
 
 col_adv1, col_adv2, col_adv3 = st.columns(3)
 
@@ -305,4 +321,4 @@ with col_adv3:
         st.write("🔥 Газ шығыны жоғары. Терморегулятор қосу ұсынылады.")
     st.write("📡 Wi-Fi тарифін жылына 1 рет қайта қарап тұрыңыз.")
 
-st.markdown("<br><p style='text-align: center; color: #94a3b8; font-size: 0.85rem;'>© 2026 EcoPredict AI | Атырау қ. | Информатика секциясы</p>", unsafe_allow_html=True)
+st.markdown("<br><p style='text-align: center; color: #64748b !important; font-size: 0.85rem;'>© 2026 EcoPredict AI | Атырау қ. | Информатика секциясы</p>", unsafe_allow_html=True)
