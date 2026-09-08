@@ -48,11 +48,12 @@ with st.sidebar:
     st.markdown("---")
     st.subheader("📊 Ресурс тұтыну мөлшері (Есептеуіш бойынша)")
     
+    # Тұрғын үй түріне байланысты әдепкі бастапқы газ мәні (Қолданушы өзі өзгерте алады)
     default_gas = 500 if housing_type == "Жер үй" else 30
     
-    energy = st.number_input("⚡ Электр қуаты (кВт/сағ)", value=395, min_value=0)
-    water = st.number_input("💧 Су мөлшері (м³)", value=12, min_value=0)
-    gas = st.number_input("🔥 Табиғи газ (м³)", value=default_gas, min_value=0)
+    energy = st.number_input("⚡ Электр қуаты (кВт/сағ)", value=220, min_value=0, step=10)
+    water = st.number_input("💧 Су мөлшері (м³)", value=12, min_value=0, step=1)
+    gas = st.number_input("🔥 Табиғи газ (м³)", value=default_gas, min_value=0, step=10)
     
     has_garden = False
     if housing_type == "Жер үй":
@@ -75,7 +76,7 @@ with st.sidebar:
     st.markdown("---")
     last_month_cost = st.number_input("💰 Өткен айдағы жалпы төлем, ₸", value=25000, min_value=0)
 
-# 🧠 5. МАТЕМАТИКАЛЫҚ МОДЕЛЬ (ЖҰМСАРТЫЛҒАН ЛОГИКА)
+# 🧠 5. МАТЕМАТИКАЛЫҚ МОДЕЛЬ
 housing_note = "Су + Канализация" if housing_type == "Пәтер (Корпус үй)" else "Тек су"
 
 # Шығындарды есептеу
@@ -89,16 +90,16 @@ resources_cost = current_light_cost + current_water_cost + current_gas_cost
 # Жалпы айлық төлем (Ресурстар + Wi-Fi)
 total_current_cost = resources_cost + wifi_cost
 
-# ЖҰМСАРТЫЛҒАН НОРМАЛАР:
-energy_limit = ppl * 100  # 70-тен 100 кВт-қа көбейтілді
-water_limit = ppl * 5     # 3-тен 5 м³-қа көбейтілді
+# ЖҰМСАРТЫЛҒАН НОРМАЛАР
+energy_limit = ppl * 100
+water_limit = ppl * 5
 gas_limit = 600 + (ppl * 30) if housing_type == "Жер үй" else ppl * 15
 
 energy_eff = max(0, 100 - (energy / energy_limit * 100))
 water_eff = max(0, 100 - (water / water_limit * 100))
 gas_eff = max(0, 100 - (gas / gas_limit * 100))
 
-# +25 БАЗАЛЫҚ БОНУС БАЛЛ
+# БАЗАЛЫҚ БОНУС
 if housing_type == "Жер үй":
     eco_score = int((energy_eff * 0.35) + (water_eff * 0.20) + (gas_eff * 0.45) + 25)
 else:
@@ -106,7 +107,7 @@ else:
 
 eco_score = max(0, min(100, eco_score))
 
-# Болжам: Тек есептеуіш ресурстарын 10%-ға үнемдеу
+# Болжам: 10%-ға үнемдеу
 forecast_cost = (resources_cost * 0.90) + wifi_cost
 
 # Салыстыру
@@ -127,7 +128,7 @@ with col4:
 with col5:
     st.markdown(f"<div class='metric-card'><h3>🏆 Eco Score</h3><h2 style='color:#f9a825;'>{eco_score}/100</h2><p style='color:{diff_color}; font-weight:bold;'>{diff_text}</p></div>", unsafe_allow_html=True)
 
-# 🌳 7. ECO-TREE STATUS (ЖАҢАРТЫЛҒАН ШЕКТЕР)
+# 🌳 7. ECO-TREE STATUS
 st.markdown("---")
 st.subheader("🌳 Эко-ағаштың күйі")
 
