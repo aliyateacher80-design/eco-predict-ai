@@ -6,7 +6,7 @@ from datetime import datetime
 # 1. БЕТТІҢ НЕГІЗГІ ПАРАМЕТРЛЕРІ
 st.set_page_config(page_title="EcoPredict AI v4.5", layout="wide", page_icon="🌿")
 
-# 🎨 2. ДИЗАЙН (CSS) - Интерфейсті жақсарту
+# 🎨 2. ДИЗАЙН (CSS)
 st.markdown("""
     <style>
     .stApp { background-color: #f8faf8; }
@@ -42,24 +42,25 @@ st.markdown("<p style='text-align: center; font-size: 1.2rem;'>Атырау об
 with st.sidebar:
     st.header("⚙️ Деректерді енгізу")
     
-    # Тұрғын үй түрін таңдау
     housing_type = st.radio("🏠 Тұрғын үй түрі:", ("Пәтер (Корпус үй)", "Жер үй"))
     
     st.markdown("---")
     st.subheader("📊 Ресурс тұтыну мөлшері")
+    
+    # 🏠 Тұрғын үй түріне қарай газдың бастапқы реалистік мәнін белгілеу
+    default_gas = 500 if housing_type == "Жер үй" else 30
+    
     energy = st.number_input("⚡ Электр қуаты (кВт/сағ)", value=395, min_value=0)
-    water = st.number_input("💧 Су мөлшері (м³)", value=10, min_value=0)
-    gas = st.number_input("🔥 Табиғи газ (м³)", value=120, min_value=0)
+    water = st.number_input("💧 Су мөлшері (м³)", value=12, min_value=0)
+    gas = st.number_input("🔥 Табиғи газ (м³)", value=default_gas, min_value=0)
     
     has_garden = False
     if housing_type == "Жер үй":
         has_garden = st.checkbox("🌻 Бақшаңыз/Жер теліміңіз бар ма?")
     
     st.markdown("---")
-    # 💳 ТАРИФТЕРДІ ҚОЛДАН ӨЗГЕРТУ БӨЛІМІ
     st.subheader("💳 Тарифтерді реттеу (₸)")
     
-    # Тұрғын үй түріне қарай бастапқы су тарифі
     default_water_tariff = 286.49 if housing_type == "Пәтер (Корпус үй)" else 217.96
     
     LIGHT_TARIFF = st.number_input("⚡ Электр тарифі (₸/кВт)", value=24.50, step=0.1)
@@ -68,27 +69,38 @@ with st.sidebar:
 
     st.markdown("---")
     ppl = st.slider("👥 Отбасы мүшелері", 1, 10, 5)
-    last_month_cost = st.number_input("💰 Өткен айдағы жалпы төлем, ₸", value=16000, min_value=0)
+    last_month_cost = st.number_input("💰 Өткен айдағы жалпы төлем, ₸", value=22000, min_value=0)
 
-# 🧠 5. МАТЕМАТИКАЛЫҚ МОДЕЛЬ
+# 🧠 5. МАТЕМАТИКАЛЫҚ МОДЕЛЬЖӘНЕ РЕАЛЬДІ НОРМАЛАР
 housing_note = "Тариф: Су + Канализация" if housing_type == "Пәтер (Корпус үй)" else "Тариф: Тек су"
 
-# Шығындарды енгізілген динамикалық тарифтерге қарай есептеу
+# Шығындарды есептеу
 current_light_cost = energy * LIGHT_TARIFF
 current_water_cost = water * WATER_TARIFF
 current_gas_cost = gas * GAS_TARIFF
 total_current_cost = current_light_cost + current_water_cost + current_gas_cost
 
-# Рейтинг (Eco Score)
-energy_limit = ppl * 70
-water_limit = ppl * 3
-gas_limit = ppl * 25
+# 🎯 РЕАЛИСТІК АДАМ БАСЫНА НЕ МЕКЕНЖАЙ ТҮРІНЕ ҚАРАЙ НОРМАЛАР:
+energy_limit = ppl * 70  # ~350 кВт/сағ (5 адамға)
+water_limit = ppl * 3    # ~15 м³ (5 адамға)
 
+# Жер үйде газ шығыны жылыту қазанына байланысты жоғары болады
+if housing_type == "Жер үй":
+    gas_limit = 450 + (ppl * 20)  # Жер үй үшін орташа жылыту нормасы: ~550 м³ (~5,700₸)
+else:
+    gas_limit = ppl * 10          # Пәтер үшін норма: ~50 м³ (~500₸)
+
+# Әр ресурс бойынша үнемділік индексі (%)
 energy_eff = max(0, 100 - (energy / energy_limit * 100))
 water_eff = max(0, 100 - (water / water_limit * 100))
 gas_eff = max(0, 100 - (gas / gas_limit * 100))
 
-eco_score = int((energy_eff + water_eff + gas_eff) / 3 + 15)
+# Салмақтық коэффициенттерге негізделген Eco Score (Газ жер үйде маңызды)
+if housing_type == "Жер үй":
+    eco_score = int((energy_eff * 0.3) + (water_eff * 0.2) + (gas_eff * 0.5) + 15)
+else:
+    eco_score = int((energy_eff * 0.45) + (water_eff * 0.35) + (gas_eff * 0.2) + 15)
+
 eco_score = max(0, min(100, eco_score))
 
 # Болжам (10% үнемдеу)
@@ -166,7 +178,7 @@ with col_adv2:
 with col_adv3:
     st.info("🔥 Табиғи газ")
     if gas > gas_limit:
-        st.write("⚠️ Газ шығыны жоғары. Жылыту қазанын (котел) **терморегуляторға** қосыңыз.")
-    st.write("🏠 Терезелер мен есіктерді жылылау газ шығынын 15–20%-ға азайтады.")
+        st.write("⚠️ Жер үйде газ шығыны жоғары. **Терморегулятор** немесе **ақылды котел** қосыңыз.")
+    st.write("🏠 Терезелер мен есіктерді жылылау газ шығынын 15–20%-ға (айына 1,500–3,000 ₸) азайтады.")
 
 st.markdown("<br><p style='text-align: center; color: grey;'>© 2026 EcoPredict AI | Атырау қ. | Информатика секциясы</p>", unsafe_allow_html=True)
