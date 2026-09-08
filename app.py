@@ -20,7 +20,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# 📅 ДИНАМИКАЛЫҚ АЙДЫ АНЫҚТАУ (ҚАЖЕТТІ АЙ АВТОМАТТЫ ТҮРДЕ ШЫҒАДЫ)
+# 📅 ДИНАМИКАЛЫҚ АЙДЫ АНЫҚТАУ
 MONTH_NAMES = {
     1: "Қаңтар", 2: "Ақпан", 3: "Наурыз", 4: "Сәуір",
     5: "Мамыр", 6: "Маусым", 7: "Шілде", 8: "Тамыз",
@@ -38,49 +38,51 @@ next_month_name = MONTH_NAMES[next_month_num]
 st.title("🌍 EcoPredict AI: Ресурстарды болжау жүйесі")
 st.markdown("<p style='text-align: center; font-size: 1.2rem;'>Атырау облысының тұрғын үй ерекшеліктеріне негізделген интеллектуалды модель</p>", unsafe_allow_html=True)
 
-# ⚙️ 4. SIDEBAR - ПАРАМЕТРЛЕР (3 РЕСУРС БӨЛЕК ЕНГІЗІЛЕДІ)
+# ⚙️ 4. SIDEBAR - ПАРАМЕТРЛЕР ЖӘНЕ ТАРИФТЕР
 with st.sidebar:
     st.header("⚙️ Деректерді енгізу")
     
-    # Тұрғын үй түрін таңдау логикасы
+    # Тұрғын үй түрін таңдау
     housing_type = st.radio("🏠 Тұрғын үй түрі:", ("Пәтер (Корпус үй)", "Жер үй"))
     
     st.markdown("---")
+    st.subheader("📊 Ресурс тұтыну мөлшері")
     energy = st.number_input("⚡ Электр қуаты (кВт/сағ)", value=395, min_value=0)
     water = st.number_input("💧 Су мөлшері (м³)", value=10, min_value=0)
     gas = st.number_input("🔥 Табиғи газ (м³)", value=120, min_value=0)
     
-    # Жер үйлер үшін бақша сұрағын шығару
     has_garden = False
     if housing_type == "Жер үй":
         has_garden = st.checkbox("🌻 Бақшаңыз/Жер теліміңіз бар ма?")
     
     st.markdown("---")
+    # 💳 ТАРИФТЕРДІ ҚОЛДАН ӨЗГЕРТУ БӨЛІМІ
+    st.subheader("💳 Тарифтерді реттеу (₸)")
+    
+    # Тұрғын үй түріне қарай бастапқы су тарифі
+    default_water_tariff = 286.49 if housing_type == "Пәтер (Корпус үй)" else 217.96
+    
+    LIGHT_TARIFF = st.number_input("⚡ Электр тарифі (₸/кВт)", value=24.50, step=0.1)
+    WATER_TARIFF = st.number_input("💧 Су тарифі (₸/м³)", value=default_water_tariff, step=1.0)
+    GAS_TARIFF = st.number_input("🔥 Газ тарифі (₸/м³)", value=10.37, step=0.1)
+
+    st.markdown("---")
     ppl = st.slider("👥 Отбасы мүшелері", 1, 10, 5)
     last_month_cost = st.number_input("💰 Өткен айдағы жалпы төлем, ₸", value=16000, min_value=0)
 
-# 🧠 5. МАТЕМАТИКАЛЫҚ МОДЕЛЬ (ДИНАМИКАЛЫҚ ТАРИФТЕР)
-LIGHT_TARIFF = 24.5
-GAS_TARIFF = 11.23  # Атырау облысы бойынша табиғи газ тарифи (₸/м³)
+# 🧠 5. МАТЕМАТИКАЛЫҚ МОДЕЛЬ
+housing_note = "Тариф: Су + Канализация" if housing_type == "Пәтер (Корпус үй)" else "Тариф: Тек су"
 
-# Тұрғын үй түріне қарай тарифті анықтау
-if housing_type == "Пәтер (Корпус үй)":
-    WATER_TARIFF = 286.49  # Су (217.96) + Канализация (68.53)
-    housing_note = "Тариф: Су + Канализация"
-else:
-    WATER_TARIFF = 217.96  # Тек пайдаланған суға (Жер үй)
-    housing_note = "Тариф: Тек су (Канализациясыз)"
-
-# Шығындарды есептеу (Ток + Су + Газ)
+# Шығындарды енгізілген динамикалық тарифтерге қарай есептеу
 current_light_cost = energy * LIGHT_TARIFF
 current_water_cost = water * WATER_TARIFF
 current_gas_cost = gas * GAS_TARIFF
 total_current_cost = current_light_cost + current_water_cost + current_gas_cost
 
-# Рейтинг (Eco Score) логикасы
-energy_limit = ppl * 70  # Адам басына норма (кВт/сағ)
-water_limit = ppl * 3    # Адам басына норма (м³)
-gas_limit = ppl * 25     # Адам басына норма (м³)
+# Рейтинг (Eco Score)
+energy_limit = ppl * 70
+water_limit = ppl * 3
+gas_limit = ppl * 25
 
 energy_eff = max(0, 100 - (energy / energy_limit * 100))
 water_eff = max(0, 100 - (water / water_limit * 100))
@@ -89,7 +91,7 @@ gas_eff = max(0, 100 - (gas / gas_limit * 100))
 eco_score = int((energy_eff + water_eff + gas_eff) / 3 + 15)
 eco_score = max(0, min(100, eco_score))
 
-# Болжам (Келесі айға 10% үнемдеу мүмкіндігімен)
+# Болжам (10% үнемдеу)
 forecast_cost = total_current_cost * 0.90 
 
 # Салыстыру
@@ -97,14 +99,14 @@ diff = total_current_cost - last_month_cost
 diff_text = f"{abs(int(diff))} ₸ үнемделді" if diff < 0 else f"{int(diff)} ₸ артық шығын"
 diff_color = "#2e7d32" if diff < 0 else "#c62828"
 
-# 📊 6. DASHBOARD (4 РЕСУРС БАҒАНЫ)
+# 📊 6. DASHBOARD
 col1, col2, col3, col4 = st.columns(4)
 with col1:
-    st.markdown(f"<div class='metric-card'><h3>⚡ Электр</h3><h2 style='color:#2e7d32;'>{energy} кВт</h2><p>{current_light_cost:,.2f} ₸</p></div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='metric-card'><h3>⚡ Электр</h3><h2 style='color:#2e7d32;'>{energy} кВт</h2><p>{current_light_cost:,.2f} ₸</p><small style='color:gray;'>Тариф: {LIGHT_TARIFF} ₸</small></div>", unsafe_allow_html=True)
 with col2:
-    st.markdown(f"<div class='metric-card'><h3>💧 Су</h3><h2 style='color:#0277bd;'>{water} м³</h2><p>{current_water_cost:,.2f} ₸</p><small style='color:gray;'>{housing_note}</small></div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='metric-card'><h3>💧 Су</h3><h2 style='color:#0277bd;'>{water} м³</h2><p>{current_water_cost:,.2f} ₸</p><small style='color:gray;'>Тариф: {WATER_TARIFF} ₸</small></div>", unsafe_allow_html=True)
 with col3:
-    st.markdown(f"<div class='metric-card'><h3>🔥 Газ</h3><h2 style='color:#e65100;'>{gas} м³</h2><p>{current_gas_cost:,.2f} ₸</p></div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='metric-card'><h3>🔥 Газ</h3><h2 style='color:#e65100;'>{gas} м³</h2><p>{current_gas_cost:,.2f} ₸</p><small style='color:gray;'>Тариф: {GAS_TARIFF} ₸</small></div>", unsafe_allow_html=True)
 with col4:
     st.markdown(f"<div class='metric-card'><h3>🏆 Eco Score</h3><h2 style='color:#f9a825;'>{eco_score}/100</h2><p style='color:{diff_color}; font-weight:bold;'>{diff_text}</p></div>", unsafe_allow_html=True)
 
@@ -123,7 +125,7 @@ else:
     st.markdown("<div class='eco-tree'>🍂</div>", unsafe_allow_html=True)
     st.warning(f"Абайлаңыз! Ресурстарды шамадан тыс жұмсау байқалады. (Рейтинг: {eco_score}/100)")
 
-# 📈 8. ГРАФИК (ЖҮЙЕЛІК ДИНАМИКАЛЫҚ АЙЛАРМЕН)
+# 📈 8. ГРАФИК
 st.subheader(f"📊 Шығындар аналитикасы: {current_month_name} vs {next_month_name} (Болжам)")
 
 chart_data = pd.DataFrame({
@@ -142,7 +144,7 @@ fig = px.bar(
 fig.update_layout(showlegend=False, xaxis_title="", yaxis_title="Сомасы (₸)")
 st.plotly_chart(fig, use_container_width=True)
 
-# 🤖 9. AI ADVISOR - ИНТЕЛЛЕКТУАЛДЫ ҰСЫНЫСТАР
+# 🤖 9. AI ADVISOR
 st.markdown("---")
 st.subheader("🤖 Eco AI Advisor интеллектуалды ұсыныстары")
 
