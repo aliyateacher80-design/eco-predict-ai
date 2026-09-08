@@ -4,7 +4,7 @@ import plotly.express as px
 from datetime import datetime
 
 # 1. БЕТТІҢ НЕГІЗГІ ПАРАМЕТРЛЕРІ
-st.set_page_config(page_title="EcoPredict AI v5.2", layout="wide", page_icon="🌿")
+st.set_page_config(page_title="EcoPredict AI v5.4", layout="wide", page_icon="🌿")
 
 # 🎨 2. ДИЗАЙН (CSS)
 st.markdown("""
@@ -48,8 +48,7 @@ with st.sidebar:
     st.markdown("---")
     st.subheader("📊 Ресурс тұтыну мөлшері (Есептеуіш бойынша)")
     
-    # Тұрғын үй түріне байланысты әдепкі бастапқы газ мәні (Қолданушы өзі өзгерте алады)
-    default_gas = 500 if housing_type == "Жер үй" else 30
+    default_gas = 350 if housing_type == "Жер үй" else 30
     
     energy = st.number_input("⚡ Электр қуаты (кВт/сағ)", value=220, min_value=0, step=10)
     water = st.number_input("💧 Су мөлшері (м³)", value=12, min_value=0, step=1)
@@ -76,34 +75,27 @@ with st.sidebar:
     st.markdown("---")
     last_month_cost = st.number_input("💰 Өткен айдағы жалпы төлем, ₸", value=25000, min_value=0)
 
-# 🧠 5. МАТЕМАТИКАЛЫҚ МОДЕЛЬ
-housing_note = "Су + Канализация" if housing_type == "Пәтер (Корпус үй)" else "Тек су"
-
-# Шығындарды есептеу
+# 🧠 5. МАТЕМАТИКАЛЫҚ МОДЕЛЬ (АҚЫЛДЫ ӘРІ ӘДІЛ ЕСЕПТЕУ)
 current_light_cost = energy * LIGHT_TARIFF
 current_water_cost = water * WATER_TARIFF
 current_gas_cost = gas * GAS_TARIFF
 
-# Есептеуіш арқылы шығатын ресурстар сомасы
 resources_cost = current_light_cost + current_water_cost + current_gas_cost
-
-# Жалпы айлық төлем (Ресурстар + Wi-Fi)
 total_current_cost = resources_cost + wifi_cost
 
-# ЖҰМСАРТЫЛҒАН НОРМАЛАР
-energy_limit = ppl * 100
-water_limit = ppl * 5
-gas_limit = 600 + (ppl * 30) if housing_type == "Жер үй" else ppl * 15
+# АТЫРАУ НОРМАЛАРЫ
+energy_limit = ppl * 80
+water_limit = ppl * 4
+gas_limit = (300 + (ppl * 20)) if housing_type == "Жер үй" else (ppl * 12)
 
 energy_eff = max(0, 100 - (energy / energy_limit * 100))
 water_eff = max(0, 100 - (water / water_limit * 100))
 gas_eff = max(0, 100 - (gas / gas_limit * 100))
 
-# БАЗАЛЫҚ БОНУС
 if housing_type == "Жер үй":
-    eco_score = int((energy_eff * 0.35) + (water_eff * 0.20) + (gas_eff * 0.45) + 25)
+    eco_score = int((energy_eff * 0.35) + (water_eff * 0.25) + (gas_eff * 0.40) + 10)
 else:
-    eco_score = int((energy_eff * 0.40) + (water_eff * 0.35) + (gas_eff * 0.25) + 25)
+    eco_score = int((energy_eff * 0.45) + (water_eff * 0.35) + (gas_eff * 0.20) + 10)
 
 eco_score = max(0, min(100, eco_score))
 
@@ -132,13 +124,13 @@ with col5:
 st.markdown("---")
 st.subheader("🌳 Эко-ағаштың күйі")
 
-if eco_score >= 75:
+if eco_score >= 70:
     st.balloons()
     st.markdown("<div class='eco-tree'>🌳🌳🌳</div>", unsafe_allow_html=True)
     st.success(f"Керемет! Сіздің экологиялық жауапкершілігіңіз өте жоғары! (Рейтинг: {eco_score}/100)")
-elif 50 <= eco_score < 75:
+elif 45 <= eco_score < 70:
     st.markdown("<div class='eco-tree'>🌿🌿</div>", unsafe_allow_html=True)
-    st.info(f"Жақсы көрсеткіш! Ресурстар ұтымды жұмсалуда, тағы да үнемдеуге болады. (Рейтинг: {eco_score}/100)")
+    st.info(f"Жақсы көрсеткіш! Ресурстар ұтымды жұмсалуда. (Рейтинг: {eco_score}/100)")
 else:
     st.markdown("<div class='eco-tree'>🍂</div>", unsafe_allow_html=True)
     st.warning(f"Абайлаңыз! Ресурстарды шамадан тыс жұмсау байқалады. (Рейтинг: {eco_score}/100)")
@@ -184,7 +176,7 @@ with col_adv2:
 with col_adv3:
     st.info("🔥 Табиғи газ & 📡 Интернет")
     if gas > gas_limit:
-        st.write("🔥 Жер үйде газ шығыны жоғары. **Терморегулятор** қосыңыз.")
+        st.write("🔥 Газ шығыны нормадан жоғары. **Терморегулятор** қосыңыз.")
     st.write("📡 Wi-Fi тарифін жылына 1 рет тиімді пакеттерге ауыстыру арқылы абоненттік төлемді азайтуға болады.")
 
 st.markdown("<br><p style='text-align: center; color: grey;'>© 2026 EcoPredict AI | Атырау қ. | Информатика секциясы</p>", unsafe_allow_html=True)
