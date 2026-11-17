@@ -4,31 +4,15 @@ import plotly.express as px
 from datetime import datetime
 
 # 1. БЕТТІҢ НЕГІЗГІ ПАРАМЕТРЛЕРІ
-st.set_page_config(
-    page_title="EcoPredict AI", 
-    layout="wide", 
-    page_icon="🌿",
-    initial_sidebar_state="expanded"
-)
+st.set_page_config(page_title="EcoPredict AI", layout="wide", page_icon="🌿")
 
-# 🎨 2. СТИЛЬДЕР ЖӘНЕ ДИЗАЙН (Сайдбардың көрінуін тұрақтандыру үшін)
+# 🎨 2. СТИЛЬДЕР ЖӘНЕ ДИЗАЙН (GLASSMORPHISM)
 st.markdown("""
     <style>
     .stApp {
         background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%) !important;
         color: #f1f5f9;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-    
-    /* Сайдбардың тұрақты көрінуі мен фон түсі */
-    [data-testid="stSidebar"] {
-        background-color: #1e293b !important;
-        border-right: 1px solid #334155;
-        min-width: 300px;
-    }
-    
-    [data-testid="stSidebar"] * {
-        color: #f1f5f9 !important;
     }
     
     /* Мөлдір Карточкалар */
@@ -120,45 +104,37 @@ next_month_num = (current_month_num % 12) + 1
 current_month_name = MONTH_NAMES[current_month_num]
 next_month_name = MONTH_NAMES[next_month_num]
 
-# ⚙️ 4. SIDEBAR (СОЛ ЖАҚ ПАНЕЛЬ) - ӘРҚАШАН БІРІНШІ ТҰРУЫ КЕРЕК
-sidebar = st.sidebar
-with sidebar:
-    st.header("⚙️ Енгізу панелі")
-    
-    housing_type = st.radio("🏠 Тұрғын үй түрі:", ("Пәтер (Корпус үй)", "Жер үй"))
-    ppl = st.slider("👥 Отбасы мүшелері", 1, 10, 5)
-    
-    st.markdown("---")
-    st.subheader("📊 Ресурс тұтыну (Есептеуіш)")
-    
-    default_gas = 350 if housing_type == "Жер үй" else 30
-    
-    energy = st.number_input("⚡ Электр қуаты (кВт/сағ)", value=220, min_value=0, step=10)
-    water = st.number_input("💧 Су мөлшері (м³)", value=12, min_value=0, step=1)
-    gas = st.number_input("🔥 Табиғи газ (м³)", value=default_gas, min_value=0, step=10)
-    
-    has_garden = False
-    if housing_type == "Жер үй":
-        has_garden = st.checkbox("🌻 Бақша / Жер телімі бар")
-    
-    st.markdown("---")
-    st.subheader("🌐 Бекітілген төлем")
-    wifi_cost = st.number_input("📡 Wi-Fi / Телеком (₸/ай)", value=6500, step=500)
-
-    st.markdown("---")
-    st.subheader("💳 Тарифтер (₸)")
-    default_water_tariff = 286.49 if housing_type == "Пәтер (Корпус үй)" else 217.96
-    
-    LIGHT_TARIFF = st.number_input("⚡ Электр (₸/кВт)", value=24.50, step=0.1)
-    WATER_TARIFF = st.number_input("💧 Су (₸/м³)", value=default_water_tariff, step=1.0)
-    GAS_TARIFF = st.number_input("🔥 Газ (₸/м³)", value=10.37, step=0.1)
-
-    st.markdown("---")
-    last_month_cost = st.number_input("💰 Өткен айдағы төлем, ₸", value=25000, min_value=0)
-
 # 🏠 3. HEADER
 st.markdown("<h1 style='text-align: center; font-size: 2.5rem; font-weight: 800;'>🌿 EcoPredict AI</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #cbd5e1 !important; font-size: 1.1rem; margin-bottom: 30px;'>Атырау облысы бойынша коммуналдық шығындар мен ресурстарды интеллектуалды аналитикалау</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #cbd5e1 !important; font-size: 1.1rem; margin-bottom: 20px;'>Атырау облысы бойынша коммуналдық шығындар мен ресурстарды интеллектуалды аналитикалау</p>", unsafe_allow_html=True)
+
+# ⚙️ 4. НЕГІЗГІ БЕТТЕГІ БАСҚАРУ ПАНЕЛІ (САЙДБАРДЫҢ ОРНЫНА)
+with st.expander("⚙️ Мәліметтерді енгізу және баптау панелі (Ашу / Жабу)", expanded=True):
+    col_in1, col_in2, col_in3 = st.columns(3)
+    
+    with col_in1:
+        housing_type = st.radio("🏠 Тұрғын үй түрі:", ("Пәтер (Корпус үй)", "Жер үй"))
+        ppl = st.slider("👥 Отбасы мүшелері", 1, 10, 5)
+        wifi_cost = st.number_input("📡 Wi-Fi / Телеком (₸/ай)", value=6500, step=500)
+        
+    with col_in2:
+        default_gas = 350 if housing_type == "Жер үй" else 30
+        energy = st.number_input("⚡ Электр қуаты (кВт/сағ)", value=220, min_value=0, step=10)
+        water = st.number_input("💧 Су мөлшері (м³)", value=12, min_value=0, step=1)
+        gas = st.number_input("🔥 Табиғи газ (м³)", value=default_gas, min_value=0, step=10)
+        
+    with col_in3:
+        has_garden = False
+        if housing_type == "Жер үй":
+            has_garden = st.checkbox("🌻 Бақша / Жер телімі бар")
+        
+        default_water_tariff = 286.49 if housing_type == "Пәтер (Корпус үй)" else 217.96
+        LIGHT_TARIFF = st.number_input("⚡ Электр тарифі (₸/кВт)", value=24.50, step=0.1)
+        WATER_TARIFF = st.number_input("💧 Су тарифі (₸/м³)", value=default_water_tariff, step=1.0)
+        GAS_TARIFF = st.number_input("🔥 Газ тарифі (₸/м³)", value=10.37, step=0.1)
+        last_month_cost = st.number_input("💰 Өткен айдағы жалпы төлем, ₸", value=25000, min_value=0)
+
+st.markdown("<br>", unsafe_allow_html=True)
 
 # 🧠 5. МАТЕМАТИКАЛЫҚ МОДЕЛЬ
 current_light_cost = energy * LIGHT_TARIFF
