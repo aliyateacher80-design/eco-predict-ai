@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 from datetime import datetime
 
-# 1. БЕТТІҢ НЕГІЗГІ ПАРАМЕТРЛЕРІ (сайдбарды міндетті түрде ашық қылатын параметр)
+# 1. БЕТТІҢ НЕГІЗГІ ПАРАМЕТРЛЕРІ
 st.set_page_config(
     page_title="EcoPredict AI", 
     layout="wide", 
@@ -11,23 +11,23 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 🎨 2. СТИЛЬДЕР ЖӘНЕ ДИЗАЙН
+# 🎨 2. СТИЛЬДЕР ЖӘНЕ ДИЗАЙН (Сайдбардың көрінуін тұрақтандыру үшін)
 st.markdown("""
     <style>
-    /* Негізгі артқы фон */
     .stApp {
         background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%) !important;
         color: #f1f5f9;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
     
-    /* Сайдбар стилі */
-    section[data-testid="stSidebar"] {
+    /* Сайдбардың тұрақты көрінуі мен фон түсі */
+    [data-testid="stSidebar"] {
         background-color: #1e293b !important;
         border-right: 1px solid #334155;
+        min-width: 300px;
     }
     
-    section[data-testid="stSidebar"] * {
+    [data-testid="stSidebar"] * {
         color: #f1f5f9 !important;
     }
     
@@ -65,14 +65,12 @@ st.markdown("""
         font-weight: 500;
     }
     
-    /* Шеткі түсті индикаторлар */
     .card-light { border-top: 4px solid #10b981; }
     .card-water { border-top: 4px solid #38bdf8; }
     .card-gas { border-top: 4px solid #fb923c; }
     .card-wifi { border-top: 4px solid #c084fc; }
     .card-score { border-top: 4px solid #facc15; }
     
-    /* Эко-ағаш секциясы */
     .eco-container {
         background: rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(16px);
@@ -88,7 +86,6 @@ st.markdown("""
         margin: 10px 0;
     }
     
-    /* Прогресс-бар */
     .progress-bar-bg {
         background-color: rgba(255, 255, 255, 0.1);
         border-radius: 50px;
@@ -123,12 +120,9 @@ next_month_num = (current_month_num % 12) + 1
 current_month_name = MONTH_NAMES[current_month_num]
 next_month_name = MONTH_NAMES[next_month_num]
 
-# 🏠 3. HEADER
-st.markdown("<h1 style='text-align: center; font-size: 2.5rem; font-weight: 800;'>🌿 EcoPredict AI</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #cbd5e1 !important; font-size: 1.1rem; margin-bottom: 30px;'>Атырау облысы бойынша коммуналдық шығындар мен ресурстарды интеллектуалды аналитикалау</p>", unsafe_allow_html=True)
-
-# ⚙️ 4. SIDEBAR (СОЛ ЖАҚ ПАНЕЛЬ)
-with st.sidebar:
+# ⚙️ 4. SIDEBAR (СОЛ ЖАҚ ПАНЕЛЬ) - ӘРҚАШАН БІРІНШІ ТҰРУЫ КЕРЕК
+sidebar = st.sidebar
+with sidebar:
     st.header("⚙️ Енгізу панелі")
     
     housing_type = st.radio("🏠 Тұрғын үй түрі:", ("Пәтер (Корпус үй)", "Жер үй"))
@@ -161,6 +155,10 @@ with st.sidebar:
 
     st.markdown("---")
     last_month_cost = st.number_input("💰 Өткен айдағы төлем, ₸", value=25000, min_value=0)
+
+# 🏠 3. HEADER
+st.markdown("<h1 style='text-align: center; font-size: 2.5rem; font-weight: 800;'>🌿 EcoPredict AI</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #cbd5e1 !important; font-size: 1.1rem; margin-bottom: 30px;'>Атырау облысы бойынша коммуналдық шығындар мен ресурстарды интеллектуалды аналитикалау</p>", unsafe_allow_html=True)
 
 # 🧠 5. МАТЕМАТИКАЛЫҚ МОДЕЛЬ
 current_light_cost = energy * LIGHT_TARIFF
