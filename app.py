@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 from datetime import datetime
 
-# 1. БЕТТІҢ НЕГІЗГІ ПАРАМЕТРЛЕРІ (Сайдбарды автоматты түрде ашық қылу)
+# 1. БЕТТІҢ НЕГІЗГІ ПАРАМЕТРЛЕРІ
 st.set_page_config(
     page_title="EcoPredict AI", 
     layout="wide", 
@@ -11,7 +11,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 🎨 2. СТИЛЬДЕР ЖӘНЕ ДИЗАЙН (Батырма мен сайдбарды түзететін стиль)
+# 🎨 2. СТИЛЬДЕР ЖӘНЕ ДИЗАЙН
 st.markdown("""
     <style>
     .stApp {
@@ -26,11 +26,18 @@ st.markdown("""
         border-right: 1px solid rgba(255, 255, 255, 0.1);
     }
     
-    [data-testid="stSidebar"] * {
-        color: #f1f5f9 !important;
+    /* Сайдбардағы жалпы мәтіндер ақ болуы үшін */
+    [data-testid="stSidebar"] p, [data-testid="stSidebar"] span, [data-testid="stSidebar"] label {
+        color: #f8fafc !important;
     }
     
-    /* Сайдбарды ашу/жабу батырмасын көрінетін әрі әдемі ету */
+    /* Сайдбардағы input (сан енгізу) өрістерінің ішіндегі жазулар анық көріну үшін */
+    [data-testid="stSidebar"] input {
+        color: #0f172a !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Сайдбарды ашу/жабу батырмасы */
     button[kind="header"] {
         background-color: rgba(255, 255, 255, 0.15) !important;
         color: #f8fafc !important;
