@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 from datetime import datetime
 
-# 1. БЕТТІҢ НЕГІЗГІ ПАРАМЕТРЛЕРІ (initial_sidebar_state="expanded" сайдбарды міндетті түрде ашық қылады)
+# 1. БЕТТІҢ НЕГІЗГІ ПАРАМЕТРЛЕРІ (сайдбарды міндетті түрде ашық қылатын параметр)
 st.set_page_config(
     page_title="EcoPredict AI", 
     layout="wide", 
@@ -11,7 +11,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 🎨 2. ЕҢ ӘДЕМІ SOFT DARK / GLASSMORPHISM СТИЛІ
+# 🎨 2. СТИЛЬДЕР ЖӘНЕ ДИЗАЙН
 st.markdown("""
     <style>
     /* Негізгі артқы фон */
@@ -21,17 +21,17 @@ st.markdown("""
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
     
-    /* Сайдбар стилі мен көрінуі */
-    [data-testid="stSidebar"] {
+    /* Сайдбар стилі */
+    section[data-testid="stSidebar"] {
         background-color: #1e293b !important;
         border-right: 1px solid #334155;
     }
     
-    [data-testid="stSidebar"] * {
+    section[data-testid="stSidebar"] * {
         color: #f1f5f9 !important;
     }
     
-    /* Сәнді мөлдір Карточкалар */
+    /* Мөлдір Карточкалар */
     .metric-card {
         background: rgba(255, 255, 255, 0.07);
         backdrop-filter: blur(16px);
