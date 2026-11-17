@@ -3,30 +3,35 @@ import pandas as pd
 import plotly.express as px
 from datetime import datetime
 
-# 1. БЕТТІҢ НЕГІЗГІ ПАРАМЕТРЛЕРІ
-st.set_page_config(page_title="EcoPredict AI", layout="wide", page_icon="🌿")
+# 1. БЕТТІҢ НЕГІЗГІ ПАРАМЕТРЛЕРІ (initial_sidebar_state="expanded" сайдбарды міндетті түрде ашық қылады)
+st.set_page_config(
+    page_title="EcoPredict AI", 
+    layout="wide", 
+    page_icon="🌿",
+    initial_sidebar_state="expanded"
+)
 
-# 🎨 2. ЕҢ ӘДЕМІ SOFT DARK / GLASSMORPHISM СТИЛІ (АППАҚ ЕМЕС, СӘНДІ ФОН)
+# 🎨 2. ЕҢ ӘДЕМІ SOFT DARK / GLASSMORPHISM СТИЛІ
 st.markdown("""
     <style>
-    /* Негізгі артқы фон (Жұмсақ күңгірт-жасыл градиент) */
+    /* Негізгі артқы фон */
     .stApp {
         background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%) !important;
         color: #f1f5f9;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
     
-    /* Сайдбар стилі */
-    section[data-testid="stSidebar"] {
+    /* Сайдбар стилі мен көрінуі */
+    [data-testid="stSidebar"] {
         background-color: #1e293b !important;
         border-right: 1px solid #334155;
     }
     
-    section[data-testid="stSidebar"] * {
+    [data-testid="stSidebar"] * {
         color: #f1f5f9 !important;
     }
     
-    /* Сәнді мөлдір Карточкалар (Glassmorphism Effect) */
+    /* Сәнді мөлдір Карточкалар */
     .metric-card {
         background: rgba(255, 255, 255, 0.07);
         backdrop-filter: blur(16px);
@@ -83,7 +88,7 @@ st.markdown("""
         margin: 10px 0;
     }
     
-    /* Сәнді Прогресс-бар */
+    /* Прогресс-бар */
     .progress-bar-bg {
         background-color: rgba(255, 255, 255, 0.1);
         border-radius: 50px;
@@ -98,7 +103,6 @@ st.markdown("""
         transition: width 0.8s ease-in-out;
     }
     
-    /* Текстерді ақ түске реттеу */
     h1, h2, h3, h4, p, span {
         color: #f8fafc !important;
     }
@@ -123,7 +127,7 @@ next_month_name = MONTH_NAMES[next_month_num]
 st.markdown("<h1 style='text-align: center; font-size: 2.5rem; font-weight: 800;'>🌿 EcoPredict AI</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; color: #cbd5e1 !important; font-size: 1.1rem; margin-bottom: 30px;'>Атырау облысы бойынша коммуналдық шығындар мен ресурстарды интеллектуалды аналитикалау</p>", unsafe_allow_html=True)
 
-# ⚙️ 4. SIDEBAR
+# ⚙️ 4. SIDEBAR (СОЛ ЖАҚ ПАНЕЛЬ)
 with st.sidebar:
     st.header("⚙️ Енгізу панелі")
     
