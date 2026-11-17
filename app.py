@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 from datetime import datetime
 
-# 1. БЕТТІҢ НЕГІЗГІ ПАРАМЕТРЛЕРІ (Сайдбарды міндетті түрде ашық қылатын параметр)
+# 1. БЕТТІҢ НЕГІЗГІ ПАРАМЕТРЛЕРІ (Сайдбарды автоматты түрде ашық қылу)
 st.set_page_config(
     page_title="EcoPredict AI", 
     layout="wide", 
@@ -11,7 +11,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 🎨 2. СТИЛЬДЕР ЖӘНЕ ДИЗАЙН (GLASSMORPHISM)
+# 🎨 2. СТИЛЬДЕР ЖӘНЕ ДИЗАЙН (Батырма мен сайдбарды түзететін стиль)
 st.markdown("""
     <style>
     .stApp {
@@ -20,7 +20,7 @@ st.markdown("""
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
     
-    /* Сол жақ панельді (Сайдбар) әдемілеу */
+    /* Сайдбар стилі */
     [data-testid="stSidebar"] {
         background-color: #16222a !important;
         border-right: 1px solid rgba(255, 255, 255, 0.1);
@@ -28,6 +28,16 @@ st.markdown("""
     
     [data-testid="stSidebar"] * {
         color: #f1f5f9 !important;
+    }
+    
+    /* Сайдбарды ашу/жабу батырмасын көрінетін әрі әдемі ету */
+    button[kind="header"] {
+        background-color: rgba(255, 255, 255, 0.15) !important;
+        color: #f8fafc !important;
+        border-radius: 8px !important;
+    }
+    button[kind="header"]:hover {
+        background-color: rgba(255, 255, 255, 0.3) !important;
     }
     
     /* Мөлдір Карточкалар */
@@ -296,7 +306,7 @@ fig.update_yaxes(showgrid=True, gridcolor='rgba(255,255,255,0.1)')
 
 st.plotly_chart(fig, use_container_width=True)
 
-# 🤖 9. AI ADVISOR (ТҮЗЕТІЛГЕН, АНЫҚ КӨРІНЕТІН НҰСҚА)
+# 🤖 9. AI ADVISOR
 st.markdown("<hr style='border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 30px 0;'>", unsafe_allow_html=True)
 st.markdown("<h3 style='font-size: 1.3rem; font-weight: 700;'>🤖 Eco AI Advisor ұсыныстары</h3>", unsafe_allow_html=True)
 
