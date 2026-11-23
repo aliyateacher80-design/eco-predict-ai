@@ -257,13 +257,13 @@ with col5:
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# 🌳 7. ECO-TREE STATUS (ЖАСЫЛ 55-ТЕН БАСТАП ЖАНАДЫ)
-if eco_score >= 55:
+# 🌳 7. ECO-TREE STATUS (ЖАСЫЛ >= 50, САРЫ 40..49)
+if eco_score >= 50:
     tree_icon = "🌳🌳🌳"
     status_title = "Керемет көрсеткіш!"
     status_desc = "Ресурстар өте үнемді жұмсалуда. Экологиялық жауапкершілігіңіз жоғары."
     bar_color = "#34d399"
-elif 40 <= eco_score < 55:
+elif 40 <= eco_score < 50:
     tree_icon = "🌿🌿"
     status_title = "Жақсы орташа деңгей!"
     status_desc = "Ресурстар ұтымды жұмсалуда, бірақ әлі де үнемдеуге мүмкіндік бар."
