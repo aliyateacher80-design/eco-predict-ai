@@ -31,7 +31,7 @@ st.markdown("""
         color: #f8fafc !important;
     }
 
-    /* Сайдбардағы input өрістерінің ішіндегі жазулар анық көріну үшін */
+    /* Сайдбардағы input (сан енгізу) өрістерінің ішіндегі жазулар анық көріну үшін */
     [data-testid="stSidebar"] input {
         color: #0f172a !important;
         font-weight: 600 !important;
@@ -116,14 +116,6 @@ st.markdown("""
         transition: width 0.8s ease-in-out;
     }
 
-    .advisor-box {
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 16px;
-        padding: 16px;
-        height: 100%;
-    }
-
     h1, h2, h3, h4, p, span, li {
         color: #f8fafc !important;
     }
@@ -166,15 +158,15 @@ with st.sidebar:
 
     st.markdown("---")
     st.subheader("🌐 Бекітілген төлем")
-    wifi_cost = st.number_input("📡 Wi-Fi / Телеком (₸/ай)", value=6500, min_value=0, step=500)
+    wifi_cost = st.number_input("📡 Wi-Fi / Телеком (₸/ай)", value=6500, step=500)
 
     st.markdown("---")
     st.subheader("💳 Тарифтер (₸)")
     default_water_tariff = 286.49 if housing_type == "Пәтер (Корпус үй)" else 217.96
 
-    light_tariff = st.number_input("⚡ Электр (₸/кВт)", value=24.50, min_value=0.0, step=0.1)
-    water_tariff = st.number_input("💧 Су (₸/м³)", value=float(default_water_tariff), min_value=0.0, step=1.0)
-    gas_tariff = st.number_input("🔥 Газ (₸/м³)", value=10.37, min_value=0.0, step=0.1)
+    LIGHT_TARIFF = st.number_input("⚡ Электр (₸/кВт)", value=24.50, step=0.1)
+    WATER_TARIFF = st.number_input("💧 Су (₸/м³)", value=default_water_tariff, step=1.0)
+    GAS_TARIFF = st.number_input("🔥 Газ (₸/м³)", value=10.37, step=0.1)
 
     st.markdown("---")
     last_month_cost = st.number_input("💰 Өткен айдағы төлем, ₸", value=25000, min_value=0)
@@ -188,16 +180,15 @@ st.markdown(
 )
 
 # 🧠 5. МАТЕМАТИКАЛЫҚ МОДЕЛЬ
-current_light_cost = energy * light_tariff
-current_water_cost = water * water_tariff
-current_gas_cost = gas * gas_tariff
+current_light_cost = energy * LIGHT_TARIFF
+current_water_cost = water * WATER_TARIFF
+current_gas_cost = gas * GAS_TARIFF
 
 resources_cost = current_light_cost + current_water_cost + current_gas_cost
 total_current_cost = resources_cost + wifi_cost
 
 energy_limit = max(1, ppl * 80)
-garden_bonus_water = 5 if (housing_type == "Жер үй" and has_garden) else 0
-water_limit = max(1, ppl * 4 + garden_bonus_water)
+water_limit = max(1, ppl * 4)
 gas_limit = max(1, (300 + (ppl * 20)) if housing_type == "Жер үй" else (ppl * 12))
 
 energy_eff = max(0.0, 100.0 - (energy / energy_limit * 100.0))
@@ -205,9 +196,9 @@ water_eff = max(0.0, 100.0 - (water / water_limit * 100.0))
 gas_eff = max(0.0, 100.0 - (gas / gas_limit * 100.0))
 
 if housing_type == "Жер үй":
-    eco_score = int((energy_eff * 0.35) + (water_eff * 0.25) + (gas_eff * 0.40) + 10)
+    eco_score = int((energy_eff * 0.35) + (water_eff * 0.25) + (gas_eff * 0.40) + 15)
 else:
-    eco_score = int((energy_eff * 0.45) + (water_eff * 0.35) + (gas_eff * 0.20) + 10)
+    eco_score = int((energy_eff * 0.45) + (water_eff * 0.35) + (gas_eff * 0.20) + 15)
 
 eco_score = max(0, min(100, eco_score))
 forecast_cost = (resources_cost * 0.90) + wifi_cost
@@ -266,13 +257,13 @@ with col5:
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# 🌳 7. ECO-TREE STATUS
-if eco_score >= 70:
+# 🌳 7. ECO-TREE STATUS (ЖАСЫЛ 55-ТЕН БАСТАП ЖАНАДЫ)
+if eco_score >= 55:
     tree_icon = "🌳🌳🌳"
     status_title = "Керемет көрсеткіш!"
     status_desc = "Ресурстар өте үнемді жұмсалуда. Экологиялық жауапкершілігіңіз жоғары."
     bar_color = "#34d399"
-elif 45 <= eco_score < 70:
+elif 40 <= eco_score < 55:
     tree_icon = "🌿🌿"
     status_title = "Жақсы орташа деңгей!"
     status_desc = "Ресурстар ұтымды жұмсалуда, бірақ әлі де үнемдеуге мүмкіндік бар."
